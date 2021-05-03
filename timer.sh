@@ -27,8 +27,8 @@ timer () {
 
 timer_in() {
   if [[ ! -f $TIME_TRACKING/.data ]]; then
-    DAY=$(date +%F)
-    DATE_TIME=$(date "+%Y/%m/%d %H:%M:%S")
+    local DAY=$(date +%F)
+    local DATE_TIME=$(date "+%Y/%m/%d %H:%M:%S")
     echo "i $DATE_TIME $1" >> "$TIME_TRACKING/time/$DAY.ledger"
     echo $1 > "$TIME_TRACKING/.data"
     echo $(date -u +%s) >> "$TIME_TRACKING/.data"
@@ -45,9 +45,9 @@ timer_in() {
 
 timer_what() {
   if [[ -f $TIME_TRACKING/.data ]]; then
-    BEFORE=$(head -n 2 "$TIME_TRACKING/.data" | tail -n 1 )
-    NOW=$(date -u +%s)
-    ELAPSED=$((($NOW-$BEFORE)/60))
+    local BEFORE=$(head -n 2 "$TIME_TRACKING/.data" | tail -n 1 )
+    local NOW=$(date -u +%s)
+    local ELAPSED=$((($NOW-$BEFORE)/60))
     echo $ELAPSED minutes since started working in $(head -n 1 "$TIME_TRACKING/.data")
     tail -n +3 $TIME_TRACKING/.data 
   else
@@ -57,8 +57,8 @@ timer_what() {
 
 timer_out() {
   if [[ -f $TIME_TRACKING/.data ]]; then
-    DAY=$(date +%F)
-    DESCRIPTION=$(tail -n +3 $TIME_TRACKING/.data)
+    local DAY=$(date +%F)
+    local DESCRIPTION=$(tail -n +3 $TIME_TRACKING/.data)
 
     if [[ ! -z $DESCRIPTION ]]; then
       echo "; description: $DESCRIPTION" >> "$TIME_TRACKING/time/$DAY.ledger" 
@@ -73,7 +73,7 @@ timer_out() {
 }
 
 timer_clear() {
-  DAY=$(date +%F)
+  local DAY=$(date +%F)
   if [[ -f $TIME_TRACKING/.data ]]; then
     head -n -2 "$TIME_TRACKING/time/$DAY.ledger" > .tmp 
     mv .tmp "$TIME_TRACKING/time/$DAY.ledger"
@@ -84,10 +84,20 @@ timer_clear() {
 }
 
 timer_reg() {
-  ledger -f "$TIME_TRACKING/main.ledger" reg
+  ledger -f "$TIME_TRACKING/main.ledger" reg $@
 }
 
 timer_bal() {
-  ledger -f "$TIME_TRACKING/main.ledger" bal 
+  ledger -f "$TIME_TRACKING/main.ledger" bal $@
 }
 
+timer_complete() {
+  if [[ $COMP_CWORD -le 1 ]]; then
+    COMPREPLY=($(compgen -W "in out what clear reg bal" "${COMP_WORDS[1]}"));
+  elif [ "${COMP_WORDS[1]}" == "in" ]; then
+    local IFS=$'\n'
+    COMPREPLY=($(compgen -W "$(ledger -f "$TIME_TRACKING/main.ledger" accounts)" "${COMP_WORDS[2]}"));
+  fi
+}
+
+complete -F timer_complete timer
