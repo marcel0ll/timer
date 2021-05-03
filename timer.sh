@@ -32,17 +32,24 @@ timer_in() {
     echo "i $DATE_TIME $1" >> "$TIME_TRACKING/time/$DAY.ledger"
     echo $1 > "$TIME_TRACKING/.data"
     echo $(date -u +%s) >> "$TIME_TRACKING/.data"
+
+    shift
+    if [[ ! -z $@ ]]; then
+      echo $@ >> "$TIME_TRACKING/.data"
+    fi
   else
     echo Already working in $(head -n 1 "$TIME_TRACKING/.data")
+    tail -n +3 $TIME_TRACKING/.data 
   fi
 }
 
 timer_what() {
   if [[ -f $TIME_TRACKING/.data ]]; then
-    BEFORE=$(tail -n 1 "$TIME_TRACKING/.data")
+    BEFORE=$(head -n 2 "$TIME_TRACKING/.data" | tail -n 1 )
     NOW=$(date -u +%s)
     ELAPSED=$((($NOW-$BEFORE)/60))
     echo $ELAPSED minutes since started working in $(head -n 1 "$TIME_TRACKING/.data")
+    tail -n +3 $TIME_TRACKING/.data 
   else
     echo Not working atm.
   fi
@@ -51,6 +58,11 @@ timer_what() {
 timer_out() {
   if [[ -f $TIME_TRACKING/.data ]]; then
     DAY=$(date +%F)
+    DESCRIPTION=$(tail -n +3 $TIME_TRACKING/.data)
+
+    if [[ ! -z $DESCRIPTION ]]; then
+      echo "; description: $DESCRIPTION" >> "$TIME_TRACKING/time/$DAY.ledger" 
+    fi
     echo "o $(date "+%Y/%m/%d %H:%M:%S") $1" >> "$TIME_TRACKING/time/$DAY.ledger"
     echo "" >> "$TIME_TRACKING/time/$DAY.ledger"
 

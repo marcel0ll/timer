@@ -4,15 +4,11 @@ This script is used to simplify my usage of ledger-cli time logging
 
 The idea is simple, you just have to follow this steps:
 
-- Started working: `timer in client:project`
+- Started working: `timer in ACCOUNT [description]`
 - Stopped working: `timer out`
 - Forgot what you are working on: `timer what`
 - Cancel current session: `timer clear`
 - Report logged time entries: `timer reg`
 - Report logger time balance: `timer bal`
 
-## Ideas
-
-[ ] - Add second optional argument to `in` that describes what you are doing.
-This description should appear in `what` and `reg`.
-
+*ACCOUNT follows ledger-cli [account pattern](https://www.ledger-cli.org/3.0/doc/ledger3.html#Structuring-your-Accounts) 
