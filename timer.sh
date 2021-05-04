@@ -84,7 +84,7 @@ timer_clear() {
 }
 
 timer_reg() {
-  ledger -f "$TIME_TRACKING/main.ledger" reg $@
+  ledger -f "$TIME_TRACKING/main.ledger" reg -S date $@
 }
 
 timer_bal() {
