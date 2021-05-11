@@ -94,10 +94,21 @@ timer_bal() {
 timer_complete() {
   if [[ $COMP_CWORD -le 1 ]]; then
     COMPREPLY=($(compgen -W "in out what clear reg bal" "${COMP_WORDS[1]}"));
-  elif [ "${COMP_WORDS[1]}" == "in" ]; then
+  elif [ "${COMP_WORDS[1]}" == "in" ] || [ "${COMP_WORDS[1]}" == "bal" ] || [ "${COMP_WORDS[1]}" == "reg" ]; then
     local IFS=$'\n'
-    COMPREPLY=($(compgen -W "$(ledger -f "$TIME_TRACKING/main.ledger" accounts)" "${COMP_WORDS[2]}"));
+    local cur
+    _get_comp_words_by_ref -n : cur
+
+    INP=$(printf "%b" "${COMP_WORDS[@]:2}")
+    COMPREPLY=($(compgen -W "$(ledger -f "$TIME_TRACKING/main.ledger" accounts)" $INP -- $cur));
+
+    if [ "$COMPREPLY" == "$INP" ]; then
+      COMPREPLY=()
+    fi
+
+    __ltrim_colon_completions "$cur"
   fi
 }
 
 complete -F timer_complete timer
+
