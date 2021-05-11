@@ -5,6 +5,7 @@ This script is used to simplify my usage of ledger-cli time logging
 The idea is simple, you just have to follow this steps:
 
 - Started working: `timer in ACCOUNT [description]`
+- Changed activity: `timer log [description]`
 - Stopped working: `timer out`
 - Forgot what you are working on: `timer what`
 - Cancel current session: `timer clear`

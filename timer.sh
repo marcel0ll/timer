@@ -22,7 +22,17 @@ timer () {
     "clear") timer_clear $@;;
     "reg") timer_reg $@;;
     "bal") timer_bal $@;;
-    *) echo "Try in/log/out/what/clear/reg/bal";;
+    *) echo "Try timer 'in, log, out, what, clear, reg, bal'
+
+- Started working: 'timer in ACCOUNT [description]'
+- Changed activity: 'timer log [description]'
+- Stopped working: 'timer out'
+- Forgot what you are working on: 'timer what'
+- Cancel current session: 'timer clear'
+- Report logged time entries: 'timer reg'
+- Report logger time balance: 'timer bal'
+
+*ACCOUNT follows ledger-cli account pattern A:B:C";;
   esac
 }
 
