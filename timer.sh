@@ -16,12 +16,13 @@ timer () {
   shift
   case $CMD in
     "in") timer_in $@;;
+    "log") timer_log $@;;
     "out") timer_out $@;;
     "what") timer_what $@;;
     "clear") timer_clear $@;;
     "reg") timer_reg $@;;
     "bal") timer_bal $@;;
-    *) echo "Try in/out/what/clear/reg/bal";;
+    *) echo "Try in/log/out/what/clear/reg/bal";;
   esac
 }
 
@@ -40,6 +41,16 @@ timer_in() {
   else
     echo Already working in $(head -n 1 "$TIME_TRACKING/.data")
     tail -n +3 $TIME_TRACKING/.data 
+  fi
+}
+
+timer_log() {
+  if [[ -f $TIME_TRACKING/.data ]]; then
+    local account=$(head -n 1 "$TIME_TRACKING/.data" )
+    timer_out
+    timer_in $account $@
+  else
+    echo Not working atm.
   fi
 }
 
