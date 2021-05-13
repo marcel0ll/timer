@@ -25,7 +25,7 @@ timer () {
     *) echo "Try timer 'in, log, out, what, clear, reg, bal'
 
 - Started working: 'timer in ACCOUNT [description]'
-- Changed activity: 'timer log [description]'
+- Changed activity: 'timer log [ACCOUNT] [description]'
 - Stopped working: 'timer out'
 - Forgot what you are working on: 'timer what'
 - Cancel current session: 'timer clear'
@@ -58,7 +58,12 @@ timer_log() {
   if [[ -f $TIME_TRACKING/.data ]]; then
     local account=$(head -n 1 "$TIME_TRACKING/.data" )
     timer_out
-    timer_in $account $@
+    if [[ -z $1 ]] || [ "$1" == "." ]; then
+      shift
+      timer_in $account $@
+    else
+      timer_in $@
+    fi
   else
     echo Not working atm.
   fi
