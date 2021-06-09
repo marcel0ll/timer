@@ -18,15 +18,17 @@ timer () {
     "in") timer_in $@;;
     "log") timer_log $@;;
     "out") timer_out $@;;
+    "edit") timer_edit $@;;
     "what") timer_what $@;;
     "clear") timer_clear $@;;
     "reg") timer_reg $@;;
     "bal") timer_bal $@;;
-    *) echo "Try timer 'in, log, out, what, clear, reg, bal'
+    *) echo "Try timer 'in, log, out, edit, what, clear, reg, bal'
 
 - Started working: 'timer in ACCOUNT [description]'
 - Changed activity: 'timer log [ACCOUNT] [description]'
 - Stopped working: 'timer out'
+- Edit timer: 'timer edit'
 - Forgot what you are working on: 'timer what'
 - Cancel current session: 'timer clear'
 - Report logged time entries: 'timer reg'
@@ -52,6 +54,12 @@ timer_in() {
     echo Already working in $(head -n 1 "$TIME_TRACKING/.data")
     tail -n +3 $TIME_TRACKING/.data 
   fi
+}
+
+timer_edit() {
+  local DAY=$(date +%F)
+  local FILE="$TIME_TRACKING/time/$DAY.ledger"
+  vim $FILE
 }
 
 timer_log() {
@@ -119,8 +127,8 @@ timer_bal() {
 
 timer_complete() {
   if [[ $COMP_CWORD -le 1 ]]; then
-    COMPREPLY=($(compgen -W "in out what clear reg bal" "${COMP_WORDS[1]}"));
-  elif [ "${COMP_WORDS[1]}" == "in" ] || [ "${COMP_WORDS[1]}" == "bal" ] || [ "${COMP_WORDS[1]}" == "reg" ]; then
+    COMPREPLY=($(compgen -W "in out log what clear reg bal" "${COMP_WORDS[1]}"));
+  elif [ "${COMP_WORDS[1]}" == "in" ] || [ "${COMP_WORDS[1]}" == "bal" ] || [ "${COMP_WORDS[1]}" == "reg" ] || [ "${COMP_WORDS[1]}" == "log" ]; then
     local IFS=$'\n'
     local cur
     _get_comp_words_by_ref -n : cur
