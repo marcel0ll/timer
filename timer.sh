@@ -25,8 +25,8 @@ timer () {
     "bal") timer_bal $@;;
     *) echo "Try timer 'in, log, out, edit, what, clear, reg, bal'
 
-- Started working: 'timer in ACCOUNT [description]'
-- Changed activity: 'timer log [ACCOUNT] [description]'
+- Started working: 'timer in ACCOUNT [title] [...description]'
+- Changed activity: 'timer log [ACCOUNT] [title] [...description]'
 - Stopped working: 'timer out'
 - Edit timer: 'timer edit'
 - Forgot what you are working on: 'timer what'
@@ -42,13 +42,16 @@ timer_in() {
   if [[ ! -f $TIME_TRACKING/.data ]]; then
     local DAY=$(date +%F)
     local DATE_TIME=$(date "+%Y/%m/%d %H:%M:%S")
-    echo "i $DATE_TIME $1" >> "$TIME_TRACKING/time/$DAY.ledger"
-    echo $1 > "$TIME_TRACKING/.data"
+    local ACCOUNT=$1
+    shift
+    echo "i $DATE_TIME $ACCOUNT  $@" >> "$TIME_TRACKING/time/$DAY.ledger"
+    echo $ACCOUNT > "$TIME_TRACKING/.data"
     echo $(date -u +%s) >> "$TIME_TRACKING/.data"
 
-    shift
-    if [[ ! -z $@ ]]; then
-      echo $@ >> "$TIME_TRACKING/.data"
+    read -p "Description: " description 
+
+    if [[ ! -z $description ]]; then
+      echo $description >> "$TIME_TRACKING/.data"
     fi
   else
     echo Already working in $(head -n 1 "$TIME_TRACKING/.data")
