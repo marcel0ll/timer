@@ -94,7 +94,8 @@ timer_what() {
 
 timer_out() {
   if [[ -f $TIME_TRACKING/.data ]]; then
-    local DAY=$(date +%F)
+    local BEFORE=$(head -n 2 "$TIME_TRACKING/.data" | tail -n 1 )
+    local DAY=$(date -d @$BEFORE +%F)
     local DESCRIPTION=$(tail -n +3 $TIME_TRACKING/.data)
 
     if [[ ! -z $DESCRIPTION ]]; then
